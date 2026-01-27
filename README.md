@@ -1,100 +1,68 @@
-# Cervical Cancer Diagnosis (HPV16 & Cyclin D1)
+# Cervical Cancer Diagnosis: Cyclin D1 Expression Prediction
 
-## Overview
-This repository presents a machine learning–based analysis for cervical cancer–related data using HPV type 16 oncogene information (E6/E7) and Cyclin D1 expression. The project is implemented in a Jupyter Notebook and focuses on tabular data classification.
+## Project Overview
+This project aims to classify the expression of **Cyclin D1** (Immunoreactive Score/IRS) in cervical cancer samples based on HPV infection characteristics and oncogene mutations.
 
-The primary objective of the implemented models is to classify Cyclin D1 Immunoreactive Score (IRS) into Weak and Strong categories using supervised learning methods.
+Given the **small size of the dataset (n=31)**, this project focuses on robust evaluation strategies using **Stratified K-Fold Cross-Validation** to compare the performance of classic Machine Learning algorithms against Deep Learning architectures.
 
 ## Dataset
 The dataset used in this project is obtained from a public Figshare repository:
+* **Title:** Data of Cervical Cancer HPV 16 oncogen E6 or E7 with Cyclin D1 expression
+* **DOI:** [10.6084/m9.figshare.21786644](https://doi.org/10.6084/m9.figshare.21786644)
+* **Sample Size:** 31 patients
+### Features:
+1. **HPV positive (%):** Percentage of HPV infection.
+2. **Category based on percentage:** Ordinal category (-, +, ++).
+3. **Mutation/wild oncogene:** Status of oncogene mutation.
+4. **Oncogene mutation:** Specific type (E6, E7, or None).
+### Target:
+* **Immunoreactive Score (IRS) of Cyclin D1:**
+* `0`: Weak Expression
+* `1`: Strong Expression
 
-**Title:** Data of Cervical Cancer HPV 16 oncogen E6 or E7 with Cyclin D1 expression
+## Methodology
+1. **Preprocessing:**
+* Label Encoding for ordinal and nominal categorical features.
+* StandardScaler for feature normalization.
+2. **Validation Strategy:**
+* **Stratified K-Fold CV (k=5):** Ensures class balance in training/validation splits.
+* **Holdout Set (10%):** A separate set for final unseen data evaluation.
+3. **Handling Imbalance:**
+* Applied `class_weight='balanced'` for Deep Learning models.
+* Stratified sampling for ML models.
 
-**DOI:** [https://doi.org/10.6084/m9.figshare.21786644](https://doi.org/10.6084/m9.figshare.21786644)
+## Evaluation Results
+### 1. Machine Learning Models
+Aggregated results from 5-Fold Cross-Validation.
+| Model | Accuracy (Mean) | Precision | Recall (Sensitivity) | F1 Score | AUC-ROC |
+| --- | --- | --- | --- | --- | --- |
+| **Logistic Regression** | **96.00%** | 93.33% | 100.00% | 96.00% | 96.67% |
+| **SVC** | **96.00%** | 93.33% | 100.00% | 96.00% | 96.67% |
+| **Random Forest** | 92.00% | 93.33% | 90.00% | 89.33% | 91.67% |
+### 2. Deep Learning Models (ANN)
+Sequential Neural Networks with varying architectures.
+| Architecture | Accuracy (Mean) | Precision | Recall (Sensitivity) | F1 Score | AUC-ROC |
+| --- | --- | --- | --- | --- | --- |
+| **Model 1** (Small) | 92.67% | 86.67% | 100.00% | 92.00% | 94.17% |
+| **Model 2** (Medium) | **96.00%** | 93.33% | 100.00% | 96.00% | 96.67% |
+| **Config 3** (Tanh/Adagrad) | 89.33% | 80.00% | 100.00% | 88.00% | 91.67% |
+### Holdout Performance
+All top-performing models achieved **100% Accuracy** on the 10% holdout set, correctly classifying all unseen samples.
 
-### Dataset Characteristics
-* Total samples: **31**
-* Features include:
-  * HPV-positive percentage (%)
-  * HPV percentage category
-  * Oncogene status (Mutation / Wild)
-  * Oncogene type (E6 / E7 / None)
-* Target variable:
-  * Cyclin D1 IRS (Weak / Strong)
+## Key Findings
+* **High Separability:** The high accuracy across simple models (Logistic Regression) suggests a strong linear correlation between `HPV positive (%)` and `Cyclin D1 Score`.
+* **Model Selection:** For a small dataset (n=31), complex Deep Learning models are prone to overfitting. **Logistic Regression** or **SVC** are the recommended choices as they offer high performance with lower computational cost and better interpretability.
 
-The original spreadsheet data were converted into CSV format for processing in Python.
-
-## Workflow
-### 1. Data Loading and Inspection
-* Dataset is loaded using **Pandas**
-* Basic inspection is performed to verify:
-  * data shape
-  * feature types
-  * absence of missing values
-
-### 2. Data Preprocessing
-The notebook applies standard preprocessing steps for tabular biomedical data:
-* Removal of non-informative identifier columns
-* Encoding of categorical variables into numeric form
-* Scaling of numerical features to ensure comparable ranges
-* Binary encoding of the target variable:
-  * Weak → 0
-  * Strong → 1
-
-### 3. Model Implementation
-The following **supervised machine learning models** are implemented and evaluated:
-* **Logistic Regression**
-* **Support Vector Classifier (SVC)**
-* **Random Forest Classifier**
-
-All models are applied to the same preprocessed feature set to ensure fair comparison.
-
-### 4. Training and Evaluation
-* Data are split into training and testing sets
-* Model performance is evaluated using:
-  * Accuracy
-  * Precision
-  * Recall
-  * F1-score
-  * Confusion Matrix
-
-The evaluation focuses on the model’s ability to correctly identify **Strong Cyclin D1 expression**, which is clinically relevant for risk assessment.
-
-## Results
-The implemented models demonstrate **high classification performance** on the available dataset. While results are promising, they should be interpreted cautiously due to the **small sample size** and **single-source data**.
-
-## Repository Structure
-
-```text
-cervical-cancer-diagnosis/
-│
-├── cervical_cancer_diagnosis.ipynb
-├── Data-of-Cervical-Cancer-HPV-16-oncogen-E6-or-E7-with-Cyclin-D1-expression.csv
-├── README.md
-```
-
-## Requirements
-* Python 3.x
-* NumPy
-* Pandas
-* Scikit-learn
-* Matplotlib / Seaborn
-
-## How to Run
+## Usage
 1. Clone the repository:
    ```bash
    git clone https://github.com/fzhnd/cervical-cancer-diagnosis.git
    ```
 2. Install dependencies:
    ```bash
-   pip install numpy pandas scikit-learn matplotlib seaborn
+   pip install pandas numpy matplotlib scikit-learn tensorflow
    ```
 3. Run the notebook:
    ```bash
    jupyter notebook cervical_cancer_diagnosis.ipynb
    ```
-
-## Limitations
-* Very small dataset (31 samples)
-* Results are exploratory and not clinically deployable
-* No external validation dataset is used
